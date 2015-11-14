@@ -45,6 +45,7 @@ public class MainWindow extends JFrame {
 		setForeground(SystemColor.window);
 		setBackground(SystemColor.window);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		setBounds(100, 100, 650, 380);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -229,12 +230,12 @@ public class MainWindow extends JFrame {
 							long temp_nHosts = Long.parseLong(temp_txt); // pode retornar uma "NumberFormatException".
 							
 							while ((temp_nHosts < 0) || (temp_nHosts > 4294967294L)) {
-								temp_txt = JOptionPane.showInputDialog(null, "Valor inválido!\n\nInforme um valor entre: 1 e 4.294.967.294:", "Aviso:", 2);
+								temp_txt = JOptionPane.showInputDialog(btn_HOSTS_calc, "Valor inválido!\n\nInforme um valor entre: 1 e 4.294.967.294:", "Aviso:", 2);
 								temp_nHosts = Long.parseLong(temp_txt); // pode retornar uma "NumberFormatException".
 								textField_nHosts.setText(temp_txt);
 							};
 						} catch (NumberFormatException nfe){
-							JOptionPane.showMessageDialog(null, "O valor informado não é um número INTEIRO!", "Aviso:", 0);
+							JOptionPane.showMessageDialog(btn_HOSTS_calc, "O valor informado não é um número INTEIRO!", "Aviso:", 0);
 							textField_nHosts.setText("0");							
 						}
 						
@@ -400,25 +401,25 @@ public class MainWindow extends JFrame {
 					byte  temp_CDIR = Byte.parseByte(textField_CDIR.getText()); // pode retornar uma "NumberFormatException".
 					
 					while ((temp_CDIR < 0) || (temp_CDIR > 32)) {
-						JOptionPane.showMessageDialog(null, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 2);
+						JOptionPane.showMessageDialog(btn_CDIR_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 2);
 						temp_txt = "0";
 						temp_CDIR = Byte.parseByte(temp_txt);
 						textField_CDIR.setText(temp_txt);
 					};
 					if (temp_CDIR == 31) {
-						JOptionPane.showMessageDialog(null, "O Barramento \"CDIR /31\" é inutilizável.", "Aviso:", 0);
+						JOptionPane.showMessageDialog(btn_CDIR_calc, "O Barramento \"CDIR /31\" é inutilizável.", "Aviso:", 0);
 						temp_txt = "0";
 						temp_CDIR = Byte.parseByte(temp_txt);
 						textField_CDIR.setText(temp_txt);
 					}
 					if (temp_CDIR == 32) {
-						JOptionPane.showMessageDialog(null, "O Barramento \"CDIR /32\" é útil apenas para um único HOST.", "Aviso:", 1);
+						JOptionPane.showMessageDialog(btn_CDIR_calc, "O Barramento \"CDIR /32\" é útil apenas para um único HOST.", "Aviso:", 1);
 						temp_txt = "32";
 						temp_CDIR = Byte.parseByte(temp_txt);
 						textField_CDIR.setText(temp_txt);
 					}
 				} catch (NumberFormatException nfe){
-					JOptionPane.showMessageDialog(null, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 0);
+					JOptionPane.showMessageDialog(btn_CDIR_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 0);
 					textField_CDIR.setText("0");							
 				}
 				
