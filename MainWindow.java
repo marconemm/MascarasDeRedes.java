@@ -1,9 +1,17 @@
+/**
+ * @author Marcone Melo Mendonça
+ * @date 26/10/2015. (Última modificação: 22/11/2015.)
+ * @version Beta 
+ */
+
 package marconemendonca.mascarasderedes;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.*;
+import java.awt.Desktop;
+import java.net.URI;
 
 
 public class MainWindow extends JFrame {
@@ -14,11 +22,11 @@ public class MainWindow extends JFrame {
 	private JPanel mainWindow;
 	private final ButtonGroup buttonGroup_Intro = new ButtonGroup();
 	private JTextField textField_nHosts;
-	private JTextField textField_CDIR;
-	private JTextField textField_MeDecimais_group1;
-	private JTextField textField_MeDecimais_group2;
-	private JTextField textField_MeDecimais_group3;
-	private JTextField textField_MeDecimais_group4;
+	private JTextField textField_CDIRWindow_CDIR;
+	private JTextField textField_MeDecimalWindow_MeDecimaisG1;
+	private JTextField textField_MeDecimalWindow_MeDecimaisG2;
+	private JTextField textField_MeDecimalWindow_MeDecimaisG3;
+	private JTextField textField_MeDecimalWindow_MeDecimaisG4;
 
 	/*
 	 * Launch the application.
@@ -40,31 +48,35 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
-		setTitle("M\u00E1scaras de Redes");
+		setTitle("M\u00E1scaras de Redes (Beta)");
 		setFont(UIManager.getFont("EditorPane.font"));
 		setForeground(SystemColor.window);
 		setBackground(SystemColor.window);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setBounds(100, 100, 650, 380);
+		setBounds(320, 256, 650, 380);
 		
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		Calculos calcular = new Calculos(); //cria o Objeto "calcular" com a SuperClasse "Calculos".
 		
-		JMenu mnFile = new JMenu("Arquivo");
+		JMenuBar menuBar_MainWindow = new JMenuBar();
+		setJMenuBar(menuBar_MainWindow);
 		
-		mnFile.setForeground(SystemColor.windowText);
-		mnFile.setFont(UIManager.getFont("Menu.font"));
-		menuBar.add(mnFile);
+		JMenu mn_MainWindow_File = new JMenu("Arquivo");
+		mn_MainWindow_File.setMnemonic('A');
+		
+		mn_MainWindow_File.setForeground(SystemColor.windowText);
+		mn_MainWindow_File.setFont(UIManager.getFont("Menu.font"));
+		menuBar_MainWindow.add(mn_MainWindow_File);
 		
 		
-		JMenuItem mnItNewCalc = new JMenuItem("Novo C\u00E1lculo");
-		mnItNewCalc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-		mnItNewCalc.setIcon(null);
-		mnItNewCalc.setFont(UIManager.getFont("Button.font"));
-		mnItNewCalc.setForeground(SystemColor.windowText);
-		mnFile.add(mnItNewCalc);
-		mnItNewCalc.addActionListener(new ActionListener() {
+		JMenuItem mnIt_MainWindow_NewCalc = new JMenuItem("Novo C\u00E1lculo");
+		mnIt_MainWindow_NewCalc.setMnemonic('N');
+		mnIt_MainWindow_NewCalc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
+		mnIt_MainWindow_NewCalc.setIcon(null);
+		mnIt_MainWindow_NewCalc.setFont(UIManager.getFont("Button.font"));
+		mnIt_MainWindow_NewCalc.setForeground(SystemColor.windowText);
+		mn_MainWindow_File.add(mnIt_MainWindow_NewCalc);
+		mnIt_MainWindow_NewCalc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent click) {
 				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
 				windowIntro.show(mainWindow, "window_intro_CardLayout");
@@ -72,14 +84,35 @@ public class MainWindow extends JFrame {
 		});
 		
 		
-		JMenuItem mnItExit = new JMenuItem("Sair");
-		mnItExit.setIcon(null);
-		mnItExit.setForeground(SystemColor.windowText);
-		mnItExit.setFont(UIManager.getFont("Button.font"));
-		mnFile.add(mnItExit);
-		mnItExit.addActionListener(new ActionListener() {
+		JMenuItem mnIt_MainWindow_Exit = new JMenuItem("Sair");
+		mnIt_MainWindow_Exit.setMnemonic('S');
+		mnIt_MainWindow_Exit.setIcon(null);
+		mnIt_MainWindow_Exit.setForeground(SystemColor.windowText);
+		mnIt_MainWindow_Exit.setFont(UIManager.getFont("Button.font"));
+		mn_MainWindow_File.add(mnIt_MainWindow_Exit);
+		
+		//Menu "Sobre":
+		JMenu mn_MainWindow_About = new JMenu("Sobre");
+		mn_MainWindow_About.setMnemonic('o');
+		mn_MainWindow_About.setForeground(Color.BLACK);
+		mn_MainWindow_About.setFont(UIManager.getFont("Menu.font"));
+		menuBar_MainWindow.add(mn_MainWindow_About);
+		
+		//Item de Menu "Sobre...":
+		JMenuItem mnIt_MainWindow_About = new JMenuItem("Sobre...");
+		mnIt_MainWindow_About.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent click) {
+				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
+				windowIntro.show(mainWindow, "window_About_CardLayout");
+			}
+		});
+		mnIt_MainWindow_About.setMnemonic('S');
+		mnIt_MainWindow_About.setForeground(Color.BLACK);
+		mnIt_MainWindow_About.setFont(UIManager.getFont("Button.font"));
+		mn_MainWindow_About.add(mnIt_MainWindow_About);
+		mnIt_MainWindow_Exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent exitAction) {
-				if (exitAction.getSource() == mnItExit)
+				if (exitAction.getSource() == mnIt_MainWindow_Exit)
 					System.exit(EXIT_ON_CLOSE);
 			}
 		});
@@ -101,58 +134,75 @@ public class MainWindow extends JFrame {
 		jP_intro_CardLayout.add(jP_intro_AbsLayout, "jP_intro");
 		jP_intro_AbsLayout.setLayout(null);
 		
-		JLabel label = new JLabel("Qual par\u00E2metro deseja utilizar?");
-		label.setBounds(21, 130, 185, 14);
-		jP_intro_AbsLayout.add(label);
+		JLabel label_Parametro_introWindow = new JLabel("Qual par\u00E2metro deseja utilizar?");
+		label_Parametro_introWindow.setBounds(21, 130, 185, 14);
+		jP_intro_AbsLayout.add(label_Parametro_introWindow);
 		
-		JRadioButton jRadiobutton_Hosts = new JRadioButton("N\u00FAmero de HOSTS");
-		buttonGroup_Intro.add(jRadiobutton_Hosts);
-		jRadiobutton_Hosts.setToolTipText("Neste par\u00E2metro deve ser informado o n\u00FAmero de HOSTS (clientes) que poder\u00E3o utilizar a Rede.");
-		jRadiobutton_Hosts.setSelected(true);
-		jRadiobutton_Hosts.setBounds(21, 155, 150, 23);
-		jP_intro_AbsLayout.add(jRadiobutton_Hosts);
-		
-		
-		JRadioButton jRadiobutton_CDIR = new JRadioButton("Barramento CDIR");
-		buttonGroup_Intro.add(jRadiobutton_CDIR);
-		jRadiobutton_CDIR.setToolTipText("Neste par\u00E2metro deve ser informado o Barramento CDIR (2 < CDIR < 32).");
-		jRadiobutton_CDIR.setBounds(21, 185, 150, 23);
-		jP_intro_AbsLayout.add(jRadiobutton_CDIR);
-		
-		JRadioButton radioButton_3 = new JRadioButton("M\u00E1scara de Sub-rede em DECIMAIS");
-		radioButton_3.setEnabled(false);
-		buttonGroup_Intro.add(radioButton_3);
-		radioButton_3.setToolTipText("Neste par\u00E2metro deve ser informada uma M\u00E1scara de Sub-rede em DECIMAIS.");
-		radioButton_3.setBounds(21, 215, 230, 23);
-		jP_intro_AbsLayout.add(radioButton_3);
+		JRadioButton jRadiobutton_Hosts_introWindow = new JRadioButton("N\u00FAmero de HOSTS");
+		jRadiobutton_Hosts_introWindow.setMnemonic('H');
+		buttonGroup_Intro.add(jRadiobutton_Hosts_introWindow);
+		jRadiobutton_Hosts_introWindow.setToolTipText("Neste par\u00E2metro deve ser informado o n\u00FAmero de HOSTS (clientes) que poder\u00E3o utilizar a Rede.");
+		jRadiobutton_Hosts_introWindow.setSelected(true);
+		jRadiobutton_Hosts_introWindow.setBounds(21, 155, 150, 23);
+		jP_intro_AbsLayout.add(jRadiobutton_Hosts_introWindow);
 		
 		
-		JButton button = new JButton("Pr\u00F3ximo >>");
-		button.setBounds(21, 245, 100, 23);
-		jP_intro_AbsLayout.add(button);
-		button.addActionListener(new ActionListener() {
+		JRadioButton jRadiobutton_CDIR_introWindow = new JRadioButton("Barramento CDIR");
+		jRadiobutton_CDIR_introWindow.setMnemonic('B');
+		buttonGroup_Intro.add(jRadiobutton_CDIR_introWindow);
+		jRadiobutton_CDIR_introWindow.setToolTipText("Neste par\u00E2metro deve ser informado o Barramento CDIR (2 < CDIR < 32).");
+		jRadiobutton_CDIR_introWindow.setBounds(21, 185, 150, 23);
+		jP_intro_AbsLayout.add(jRadiobutton_CDIR_introWindow);
+		
+		JRadioButton radioButton_MeDecimais_introWindow = new JRadioButton("M\u00E1scara de Sub-rede em DECIMAIS");
+		radioButton_MeDecimais_introWindow.setMnemonic('M');
+		buttonGroup_Intro.add(radioButton_MeDecimais_introWindow);
+		radioButton_MeDecimais_introWindow.setToolTipText("Neste par\u00E2metro deve ser informada uma M\u00E1scara de Sub-rede em DECIMAIS.");
+		radioButton_MeDecimais_introWindow.setBounds(21, 215, 230, 23);
+		jP_intro_AbsLayout.add(radioButton_MeDecimais_introWindow);
+		
+		
+		JButton btn_Next_introWindow = new JButton("Pr\u00F3ximo >>");
+		btn_Next_introWindow.setMnemonic('P');
+		btn_Next_introWindow.setBounds(21, 245, 100, 23);
+		jP_intro_AbsLayout.add(btn_Next_introWindow);
+		btn_Next_introWindow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (jRadiobutton_Hosts.isSelected()){
+				if (jRadiobutton_Hosts_introWindow.isSelected()){
 					CardLayout windowHOSTS = (CardLayout) mainWindow.getLayout();
 					windowHOSTS.show(mainWindow, "windowHOSTS_CardLayout");
-				} else if(jRadiobutton_CDIR.isSelected()){
+				} else if(jRadiobutton_CDIR_introWindow.isSelected()){
 					CardLayout windowCDIR = (CardLayout) mainWindow.getLayout();
 					windowCDIR.show(mainWindow, "jP_CDIRWindow_CardLayout");
+				} else {
+					CardLayout windowMeDecimais = (CardLayout) mainWindow.getLayout();
+					windowMeDecimais.show(mainWindow, "jP_MeDecimaisWindow_CardLayout");
 				}
 			}
 		});
 		
-		JTextArea txtrEstaAplicaoDestinase = new JTextArea();
-		txtrEstaAplicaoDestinase.setFocusable(false);
-		txtrEstaAplicaoDestinase.setEditable(false);
-		txtrEstaAplicaoDestinase.setLineWrap(true);
-		txtrEstaAplicaoDestinase.setTabSize(2);
-		txtrEstaAplicaoDestinase.setRows(6);
-		txtrEstaAplicaoDestinase.setForeground(SystemColor.windowText);
-		txtrEstaAplicaoDestinase.setBackground(SystemColor.menu);
-		txtrEstaAplicaoDestinase.setText("Esta aplica\u00E7\u00E3o destina-se \u00E0s determina\u00E7\u00F5es de M\u00E1scaras de Sub-rede.\r\n\r\nPodendo essas erem determinadas por 4 par\u00E2metros: N\u00FAmero de HOSTS, Barramento CDIR,  M\u00E1scara de Sub-rede em n\u00FAmeros Bin\u00E1rios e Sub-rede em n\u00FAmeros Decimais.\r\n\r\nConforme as op\u00E7\u00F5es abaixo, basta escolher qual o par\u00E2metro de c\u00E1lculo deseja utilizar.");
-		txtrEstaAplicaoDestinase.setBounds(10, 11, 614, 112);
-		jP_intro_AbsLayout.add(txtrEstaAplicaoDestinase);
+		JTextArea txtr_Descricao_introWindow = new JTextArea();
+		txtr_Descricao_introWindow.setFocusable(false);
+		txtr_Descricao_introWindow.setEditable(false);
+		txtr_Descricao_introWindow.setLineWrap(true);
+		txtr_Descricao_introWindow.setTabSize(2);
+		txtr_Descricao_introWindow.setRows(6);
+		txtr_Descricao_introWindow.setForeground(SystemColor.windowText);
+		txtr_Descricao_introWindow.setBackground(SystemColor.menu);
+		txtr_Descricao_introWindow.setText("Esta aplica\u00E7\u00E3o destina-se \u00E0s determina\u00E7\u00F5es de M\u00E1scaras de Sub-rede.\r\n\r\nPodendo essas serem determinadas por 4 par\u00E2metros: N\u00FAmero de HOSTS, Barramento CDIR e M\u00E1scara de\r\nSub-rede em DECIMAIS.\r\n\r\nConforme as op\u00E7\u00F5es abaixo, basta escolher qual o par\u00E2metro de c\u00E1lculo deseja utilizar.");
+		txtr_Descricao_introWindow.setBounds(10, 11, 614, 112);
+		jP_intro_AbsLayout.add(txtr_Descricao_introWindow);
+		
+		JLabel lbl_FREEWARE_introWindow = new JLabel("FREEWARE");
+		lbl_FREEWARE_introWindow.setForeground(new Color(0, 128, 0));
+		lbl_FREEWARE_introWindow.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_FREEWARE_introWindow.setBounds(557, 294, 66, 15);
+		jP_intro_AbsLayout.add(lbl_FREEWARE_introWindow);
+		
+		JLabel lbl_Distribuicao_introWindow = new JLabel("Distribui\u00E7\u00E3o:");
+		lbl_Distribuicao_introWindow.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_Distribuicao_introWindow.setBounds(488, 295, 59, 14);
+		jP_intro_AbsLayout.add(lbl_Distribuicao_introWindow);
 		
 		JPanel jP_HostsWindow_CL = new JPanel();
 		mainWindow.add(jP_HostsWindow_CL, "windowHOSTS_CardLayout");
@@ -212,37 +262,33 @@ public class MainWindow extends JFrame {
 		txtP_HostsWindow_CDIR.setBounds(200, 245, 50, 20);
 		jP_HostsWindow_AbsLayout.add(txtP_HostsWindow_CDIR);
 		
-		JButton btn_HOSTS_calc = new JButton("Calcular");
-		btn_HOSTS_calc.setAlignmentY(Component.TOP_ALIGNMENT);
-		btn_HOSTS_calc.setBounds(206, 101, 90, 25);
-		jP_HostsWindow_AbsLayout.add(btn_HOSTS_calc);
+		JButton btn_HostsWindow_calc = new JButton("Calcular");
+		btn_HostsWindow_calc.setMnemonic('C');
+		btn_HostsWindow_calc.setAlignmentY(Component.TOP_ALIGNMENT);
+		btn_HostsWindow_calc.setBounds(206, 101, 90, 25);
+		jP_HostsWindow_AbsLayout.add(btn_HostsWindow_calc);
 		
-		Calculos hosts = new Calculos(); //cria o Objeto "hosts" com a SuperClasse "Calculos".
+		//Calculos hosts = new Calculos(); 
 		
 		//determina a ação para o botão "Calcular" da Janela de HOSTS:
-				btn_HOSTS_calc.addActionListener(new ActionListener() {
+				btn_HostsWindow_calc.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent calcHosts) {
-						String temp_txt = textField_nHosts.getText();
 						
-						/*A próxima instrução, cria um "tratamento de exeção" para os possíveis erros de entrada
-						 * de dados pelo usuário.*/
-						try {											
-							long temp_nHosts = Long.parseLong(temp_txt); // pode retornar uma "NumberFormatException".
+						try { //INICIO Tratamento de exeção tipo "NumberFormatException":											
+							long hosts_n = Long.parseLong(textField_nHosts.getText()); // pode retornar uma "NumberFormatException".
 							
-							while ((temp_nHosts < 0) || (temp_nHosts > 4294967294L)) {
-								temp_txt = JOptionPane.showInputDialog(btn_HOSTS_calc, "Valor inválido!\n\nInforme um valor entre: 1 e 4.294.967.294:", "Aviso:", 2);
-								temp_nHosts = Long.parseLong(temp_txt); // pode retornar uma "NumberFormatException".
-								textField_nHosts.setText(temp_txt);
+							while ((hosts_n < 0) || (hosts_n > 4294967294L)) {
+								String hosts_nString = JOptionPane.showInputDialog(btn_HostsWindow_calc, "Valor inválido!\n\nInforme um valor entre: 1 e 4.294.967.294:", "Aviso:", 2);
+								hosts_n = Long.parseLong(hosts_nString); // pode retornar uma "NumberFormatException".
+								textField_nHosts.setText(hosts_nString);
 							};
 						} catch (NumberFormatException nfe){
-							JOptionPane.showMessageDialog(btn_HOSTS_calc, "O valor informado não é um número INTEIRO!", "Aviso:", 0);
+							JOptionPane.showMessageDialog(btn_HostsWindow_calc, "O valor informado não é um número INTEIRO!", "Aviso:", 0);
 							textField_nHosts.setText("0");							
-						}
+						} //FIM Tratamento de exeção tipo "NumberFormatException".	
 						
-						/* A próxima instrução, cria o long hosts_p, atribui a ele o valor o retorno do Método SetHostsPossible da Classe Hosts,
-						 * que por sua vez recebe os parâmetros long do "textField_nHosts", byte "0" e controller "true". */
-						long hosts_p = hosts.SetHostsPossibles(Long.parseLong(textField_nHosts.getText()), (byte)0);
-						byte cdir = hosts.setCDIR(); // recebe o resultado do método setCDIR da Calsse Hosts.
+						long hosts_p = calcular.setHostsPossibles(Long.parseLong(textField_nHosts.getText()), "Indireto"); // determina "hosts_p", através do método calcular.SetHostsPossibles(hosts_n, tipoCalc).
+						byte cdir = calcular.setCDIR(); // recebe o resultado do método setCDIR da Calsse Hosts.
 						
 						//A próxima instrução, atribui os valores aos respectivos campos de exibição.
 						if (hosts_p == 0){
@@ -254,18 +300,19 @@ public class MainWindow extends JFrame {
 						}else{
 							txtP_HostsWindow_Hosts_n.setText(textField_nHosts.getText());
 							txtP_HostsWindow_Hosts_p.setText(Long.valueOf(hosts_p).toString());
-							txtP_HostsWindow_MeBinario.setText(hosts.setMaskBinary());
-							txtP_HostsWindow_MeDecimal.setText(hosts.setMaskDecimal());
+							txtP_HostsWindow_MeBinario.setText(calcular.setMaskBinary());
+							txtP_HostsWindow_MeDecimal.setText(calcular.setMaskDecimal());
 							txtP_HostsWindow_CDIR.setText(Byte.valueOf(cdir).toString());
 						}
 					}
 				});
 				
-		JButton btn_HOSTS_ClearFields = new JButton("Limpar");
-		btn_HOSTS_calc.setAlignmentY(Component.TOP_ALIGNMENT);
-		btn_HOSTS_ClearFields.setBounds(306, 101, 90, 25);
-		jP_HostsWindow_AbsLayout.add(btn_HOSTS_ClearFields);
-		btn_HOSTS_ClearFields.addActionListener(new ActionListener() {
+		JButton btn_HostsWindow_ClearFields = new JButton("Limpar");
+		btn_HostsWindow_ClearFields.setMnemonic('L');
+		btn_HostsWindow_calc.setAlignmentY(Component.TOP_ALIGNMENT);
+		btn_HostsWindow_ClearFields.setBounds(306, 101, 90, 25);
+		jP_HostsWindow_AbsLayout.add(btn_HostsWindow_ClearFields);
+		btn_HostsWindow_ClearFields.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent clearHosts) {
 				textField_nHosts.setText(null);
 				txtP_HostsWindow_Hosts_n.setText(null);
@@ -301,12 +348,17 @@ public class MainWindow extends JFrame {
 		lbl_HostsWindow_CDIR.setBounds(102, 251, 95, 14);
 		jP_HostsWindow_AbsLayout.add(lbl_HostsWindow_CDIR);
 		
-		
-		
-		JButton btn_HOSTS_Back = new JButton("<< Voltar");
-		btn_HOSTS_calc.setAlignmentY(Component.TOP_ALIGNMENT);
-		btn_HOSTS_Back.setBounds(206, 274, 90, 25);
-		jP_HostsWindow_AbsLayout.add(btn_HOSTS_Back);
+		JButton btn_HostsWindow_Back = new JButton("<< Voltar");
+		btn_HostsWindow_Back.setMnemonic('V');
+		btn_HostsWindow_calc.setAlignmentY(Component.TOP_ALIGNMENT);
+		btn_HostsWindow_Back.setBounds(206, 274, 90, 25);
+		jP_HostsWindow_AbsLayout.add(btn_HostsWindow_Back);
+		btn_HostsWindow_Back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
+				windowIntro.show(mainWindow, "window_intro_CardLayout");
+			}
+		});
 		
 		JLabel lbl_HostsWindow_Titulo = new JLabel("Par\u00E2metro: N\u00FAmero de HOSTS");
 		lbl_HostsWindow_Titulo.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -326,16 +378,21 @@ public class MainWindow extends JFrame {
 		txta_HostsWindow_Descricao.setAlignmentY(0.0f);
 		txta_HostsWindow_Descricao.setAlignmentX(0.0f);
 		
-		JLabel lblInformeONmero = new JLabel("Informe o n\u00FAmero de HOSTS desejado:");
-		lblInformeONmero.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInformeONmero.setBounds(10, 73, 188, 14);
-		jP_HostsWindow_AbsLayout.add(lblInformeONmero);
-		btn_HOSTS_Back.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
-				windowIntro.show(mainWindow, "window_intro_CardLayout");
-			}
-		});
+		JLabel lbl_HostsWindow_Hosts_inf = new JLabel("Informe o n\u00FAmero de HOSTS desejado:");
+		lbl_HostsWindow_Hosts_inf.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_HostsWindow_Hosts_inf.setBounds(10, 73, 188, 14);
+		jP_HostsWindow_AbsLayout.add(lbl_HostsWindow_Hosts_inf);
+		
+		JLabel lbl_FREEWARE_HostsWindow = new JLabel("FREEWARE");
+		lbl_FREEWARE_HostsWindow.setForeground(new Color(0, 128, 0));
+		lbl_FREEWARE_HostsWindow.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_FREEWARE_HostsWindow.setBounds(558, 294, 66, 15);
+		jP_HostsWindow_AbsLayout.add(lbl_FREEWARE_HostsWindow);
+		
+		JLabel lbl_Distribuicao_HostsWindow = new JLabel("Distribui\u00E7\u00E3o:");
+		lbl_Distribuicao_HostsWindow.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_Distribuicao_HostsWindow.setBounds(489, 295, 59, 14);
+		jP_HostsWindow_AbsLayout.add(lbl_Distribuicao_HostsWindow);
 		
 		JPanel jP_cdirWindow_CardLayout = new JPanel();
 		jP_cdirWindow_CardLayout.setForeground(SystemColor.menu);
@@ -349,14 +406,14 @@ public class MainWindow extends JFrame {
 		jP_cdirWindow_AbsLayout.setEnabled(false);
 		jP_cdirWindow_CardLayout.add(jP_cdirWindow_AbsLayout, "jP_CDIRWindow_AbsLayout");
 		
-		textField_CDIR = new JTextField();
-		textField_CDIR.setToolTipText("Valores aceitos: 1 a 32.");
-		textField_CDIR.setBackground(Color.WHITE);
-		textField_CDIR.setAutoscrolls(false);
-		textField_CDIR.setAlignmentY(0.0f);
-		textField_CDIR.setAlignmentX(0.0f);
-		textField_CDIR.setBounds(160, 69, 40, 20);
-		jP_cdirWindow_AbsLayout.add(textField_CDIR);
+		textField_CDIRWindow_CDIR = new JTextField();
+		textField_CDIRWindow_CDIR.setToolTipText("Valores aceitos: 1 a 32.");
+		textField_CDIRWindow_CDIR.setBackground(Color.WHITE);
+		textField_CDIRWindow_CDIR.setAutoscrolls(false);
+		textField_CDIRWindow_CDIR.setAlignmentY(0.0f);
+		textField_CDIRWindow_CDIR.setAlignmentX(0.0f);
+		textField_CDIRWindow_CDIR.setBounds(160, 69, 40, 20);
+		jP_cdirWindow_AbsLayout.add(textField_CDIRWindow_CDIR);
 		
 		JTextPane txtP_CDIRWindow_Hosts_p = new JTextPane();
 		txtP_CDIRWindow_Hosts_p.setEditable(false);
@@ -386,78 +443,69 @@ public class MainWindow extends JFrame {
 		txtP_CDIRWindow_CDIR.setBounds(200, 145, 50, 20);
 		jP_cdirWindow_AbsLayout.add(txtP_CDIRWindow_CDIR);
 		
-		Calculos pCDIR = new Calculos(); // Cria o Objeto pDIR (Parâmetro CDIR).
-		
-		JButton btn_CDIR_calc = new JButton("Calcular");
-		btn_CDIR_calc.setAlignmentY(0.0f);
-		btn_CDIR_calc.setBounds(10, 100, 90, 25);
-		jP_cdirWindow_AbsLayout.add(btn_CDIR_calc);
-		btn_CDIR_calc.addActionListener(new ActionListener() {
+		JButton btn_CDIRWindow_calc = new JButton("Calcular");
+		btn_CDIRWindow_calc.setMnemonic('C');
+		btn_CDIRWindow_calc.setAlignmentY(0.0f);
+		btn_CDIRWindow_calc.setBounds(10, 100, 90, 25);
+		jP_cdirWindow_AbsLayout.add(btn_CDIRWindow_calc);
+		btn_CDIRWindow_calc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				/*A próxima instrução, cria um "tratamento de exeção" para os possíveis erros de entrada
 				 * de dados pelo usuário.*/
-				try {									
-					String temp_txt;
-					byte  temp_CDIR = Byte.parseByte(textField_CDIR.getText()); // pode retornar uma "NumberFormatException".
+				try {	
+					byte  temp_CDIR = Byte.parseByte(textField_CDIRWindow_CDIR.getText()); // pode retornar uma "NumberFormatException".
 					
-					while ((temp_CDIR < 0) || (temp_CDIR > 32)) {
-						JOptionPane.showMessageDialog(btn_CDIR_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 2);
-						temp_txt = "0";
-						temp_CDIR = Byte.parseByte(temp_txt);
-						textField_CDIR.setText(temp_txt);
+					if ((temp_CDIR < 0) || (temp_CDIR > 32)) {
+						JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 2);
+						temp_CDIR = Byte.parseByte("0");
+						textField_CDIRWindow_CDIR.setText("0");
 					};
 					if (temp_CDIR == 31) {
-						JOptionPane.showMessageDialog(btn_CDIR_calc, "O Barramento \"CDIR /31\" é inutilizável.", "Aviso:", 0);
-						temp_txt = "0";
-						temp_CDIR = Byte.parseByte(temp_txt);
-						textField_CDIR.setText(temp_txt);
+						JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "O Barramento \"CDIR /31\" é inutilizável.", "Aviso:", 0);
+						temp_CDIR = Byte.parseByte("0");
+						textField_CDIRWindow_CDIR.setText("0");
 					}
 					if (temp_CDIR == 32) {
-						JOptionPane.showMessageDialog(btn_CDIR_calc, "O Barramento \"CDIR /32\" é útil apenas para um único HOST.", "Aviso:", 1);
-						temp_txt = "32";
-						temp_CDIR = Byte.parseByte(temp_txt);
-						textField_CDIR.setText(temp_txt);
+						JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "O Barramento \"CDIR /32\" é útil apenas para um único HOST.", "Aviso:", 1);
+						temp_CDIR = Byte.parseByte("32");
+						textField_CDIRWindow_CDIR.setText("32");
 					}
 				} catch (NumberFormatException nfe){
-					JOptionPane.showMessageDialog(btn_CDIR_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 0);
-					textField_CDIR.setText("0");							
+					JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "O valor informado não é válido!\n\nPor favor, tente novamente com um valor entre 0 e 32.", "Aviso:", 0);
+					textField_CDIRWindow_CDIR.setText("0");							
 				}
 				
+				calcular.getCDIR(Byte.valueOf(textField_CDIRWindow_CDIR.getText())); //recebe o valor informado como barramento CDIR.
+				long hosts_p = calcular.setHostsPossibles(0, "Direto"); // determina o valor de "hosts_p", pelo método "calcular.SetHostsPossibles(0, "Direto")".								
 				
-				/* A próxima instrução, executa o Método getCDIR do Objeto pCDIR.
-				 * passand como parâmetro o valor informado pelo usuário no campo "textField_CDIR"*/
-				pCDIR.getCDIR(Byte.valueOf(textField_CDIR.getText()));
-				/* A próxima instrução, cria o Long hosts_p, atribui a ele o valor o retorno do Método SetHostsPossible da Classe Hosts,
-				 * que por sua vez recebe os parâmetros long 0, byte 0 e controller false */
-				long hosts_p = pCDIR.SetHostsPossibles(Long.valueOf(textField_CDIR.getText()),(byte)1);								
-				
-				// A próxima instução atribue valores aos respectivos campos abaixo:
-				
-				if (Byte.parseByte(textField_CDIR.getText()) == 0){
-					txtP_CDIRWindow_CDIR.setText(textField_CDIR.getText());
+				//INICIO das atribuições de valores para os campos:
+				if (Byte.parseByte(textField_CDIRWindow_CDIR.getText()) == 0){// existe Barramento CDIR /0?
+					txtP_CDIRWindow_CDIR.setText(textField_CDIRWindow_CDIR.getText());
 					txtP_CDIRWindow_Hosts_p.setText("4294967294");
-					txtP_CDIRWindow_MeBinario.setText(pCDIR.setMaskBinary());
-					txtP_CDIRWindow_MeDecimal.setText(pCDIR.setMaskDecimal());
-					} else if (Byte.parseByte(textField_CDIR.getText()) == 32){
-						txtP_CDIRWindow_CDIR.setText(textField_CDIR.getText());	
+					txtP_CDIRWindow_MeBinario.setText(calcular.setMaskBinary());
+					txtP_CDIRWindow_MeDecimal.setText(calcular.setMaskDecimal());
+					} else if (Byte.parseByte(textField_CDIRWindow_CDIR.getText()) == 32){
+						txtP_CDIRWindow_CDIR.setText(textField_CDIRWindow_CDIR.getText());	
 						txtP_CDIRWindow_Hosts_p.setText("1");
 						txtP_CDIRWindow_MeBinario.setText("11111111.11111111.11111111.11111111");
 						txtP_CDIRWindow_MeDecimal.setText("255.255.255.255");
 						} else {
-							txtP_CDIRWindow_CDIR.setText(textField_CDIR.getText());	
+							txtP_CDIRWindow_CDIR.setText(textField_CDIRWindow_CDIR.getText());	
 							txtP_CDIRWindow_Hosts_p.setText(Long.valueOf(hosts_p).toString());
-							txtP_CDIRWindow_MeBinario.setText(pCDIR.setMaskBinary());
-							txtP_CDIRWindow_MeDecimal.setText(pCDIR.setMaskDecimal());
+							txtP_CDIRWindow_MeBinario.setText(calcular.setMaskBinary());
+							txtP_CDIRWindow_MeDecimal.setText(calcular.setMaskDecimal());
 						}
+				//FIM das atribuições de valores para os campos.
 			}
 		});
 		
-		JButton btn_CDIR_ClearFields = new JButton("Limpar");
-		btn_CDIR_ClearFields.setBounds(110, 100, 90, 25);
-		jP_cdirWindow_AbsLayout.add(btn_CDIR_ClearFields);
-		btn_CDIR_ClearFields.addActionListener(new ActionListener() {
+		JButton btn_CDIRWindow_ClearFields = new JButton("Limpar");
+		btn_CDIRWindow_ClearFields.setMnemonic('L');
+		btn_CDIRWindow_ClearFields.setBounds(110, 100, 90, 25);
+		jP_cdirWindow_AbsLayout.add(btn_CDIRWindow_ClearFields);
+		btn_CDIRWindow_ClearFields.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textField_CDIR.setText(null);
+				textField_CDIRWindow_CDIR.setText(null);
 				txtP_CDIRWindow_Hosts_p.setText(null);
 				txtP_CDIRWindow_MeBinario.setText(null);
 				txtP_CDIRWindow_MeDecimal.setText(null);
@@ -485,10 +533,11 @@ public class MainWindow extends JFrame {
 		lbl_CDIRWindow_CDIR.setBounds(102, 151, 98, 14);
 		jP_cdirWindow_AbsLayout.add(lbl_CDIRWindow_CDIR);
 		
-		JButton btn_CDIR_back = new JButton("<< Voltar");
-		btn_CDIR_back.setBounds(255, 249, 90, 25);
-		jP_cdirWindow_AbsLayout.add(btn_CDIR_back);
-		btn_CDIR_back.addActionListener(new ActionListener() {
+		JButton btn_CDIRWindow_back = new JButton("<< Voltar");
+		btn_CDIRWindow_back.setMnemonic('V');
+		btn_CDIRWindow_back.setBounds(255, 249, 90, 25);
+		jP_cdirWindow_AbsLayout.add(btn_CDIRWindow_back);
+		btn_CDIRWindow_back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
 				windowIntro.show(mainWindow, "window_intro_CardLayout");
@@ -500,10 +549,10 @@ public class MainWindow extends JFrame {
 		lbl_CDIRWindow_Titulo.setBounds(255, 0, 119, 17);
 		jP_cdirWindow_AbsLayout.add(lbl_CDIRWindow_Titulo);
 		
-		JLabel lbl_CDIRWindow_01 = new JLabel("Informe o Barramento CDIR: /");
-		lbl_CDIRWindow_01.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lbl_CDIRWindow_01.setBounds(10, 73, 152, 14);
-		jP_cdirWindow_AbsLayout.add(lbl_CDIRWindow_01);
+		JLabel lbl_CDIRWindow_CDIR_info = new JLabel("Informe o Barramento CDIR: /");
+		lbl_CDIRWindow_CDIR_info.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_CDIRWindow_CDIR_info.setBounds(10, 73, 152, 14);
+		jP_cdirWindow_AbsLayout.add(lbl_CDIRWindow_CDIR_info);
 		
 		JScrollPane scrollPane_CDIRWindow_Descricao = new JScrollPane();
 		scrollPane_CDIRWindow_Descricao.setBounds(210, 28, 415, 90);
@@ -520,33 +569,44 @@ public class MainWindow extends JFrame {
 		txta_CDIRWindow_Descricao.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		txta_CDIRWindow_Descricao.setEditable(false);
 		txta_CDIRWindow_Descricao.setBorder(null);
-		txta_CDIRWindow_Descricao.select(Byte.MIN_VALUE, 1);
+		txta_CDIRWindow_Descricao.select(Byte.MIN_VALUE, 1); //determina que a ScrollBar inicie posicionada na parte superior da barra.
 		scrollPane_CDIRWindow_Descricao.setViewportView(txta_CDIRWindow_Descricao);
+		
+		JLabel lbl_FREEWARE_CDIRWindow = new JLabel("FREEWARE");
+		lbl_FREEWARE_CDIRWindow.setForeground(new Color(0, 128, 0));
+		lbl_FREEWARE_CDIRWindow.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_FREEWARE_CDIRWindow.setBounds(559, 294, 66, 15);
+		jP_cdirWindow_AbsLayout.add(lbl_FREEWARE_CDIRWindow);
+		
+		JLabel lbl_Distribuicao_CDIRWindow = new JLabel("Distribui\u00E7\u00E3o:");
+		lbl_Distribuicao_CDIRWindow.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_Distribuicao_CDIRWindow.setBounds(490, 295, 59, 14);
+		jP_cdirWindow_AbsLayout.add(lbl_Distribuicao_CDIRWindow);
 		
 		JPanel jP_MeDecimaisWindow_CL = new JPanel();
 		jP_MeDecimaisWindow_CL.setForeground(SystemColor.menu);
 		jP_MeDecimaisWindow_CL.setBorder(null);
 		jP_MeDecimaisWindow_CL.setBackground(SystemColor.menu);
-		mainWindow.add(jP_MeDecimaisWindow_CL, "name_23826972312891");
+		mainWindow.add(jP_MeDecimaisWindow_CL, "jP_MeDecimaisWindow_CardLayout");
 		jP_MeDecimaisWindow_CL.setLayout(new CardLayout(0, 0));
 		
 		JPanel jP_MeDecimaisWindow_AbsLayout = new JPanel();
 		jP_MeDecimaisWindow_AbsLayout.setLayout(null);
-		jP_MeDecimaisWindow_CL.add(jP_MeDecimaisWindow_AbsLayout, "name_24078009318013");
+		jP_MeDecimaisWindow_CL.add(jP_MeDecimaisWindow_AbsLayout, "jP_MeDecimaisWindow_AbsLayout");
 		
-		JLabel lbl_MeDecimal_Titulo = new JLabel("Par\u00E2metro: M\u00E1scara em DECIMAL");
-		lbl_MeDecimal_Titulo.setAlignmentY(Component.TOP_ALIGNMENT);
-		lbl_MeDecimal_Titulo.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lbl_MeDecimal_Titulo.setBounds(194, 0, 233, 17);
-		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimal_Titulo);
+		JLabel lbl_MeDecimalWindow_Titulo = new JLabel("Par\u00E2metro: M\u00E1scara em DECIMAL");
+		lbl_MeDecimalWindow_Titulo.setAlignmentY(Component.TOP_ALIGNMENT);
+		lbl_MeDecimalWindow_Titulo.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lbl_MeDecimalWindow_Titulo.setBounds(194, 0, 233, 17);
+		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimalWindow_Titulo);
 		
-		JScrollPane scrollPane_MeDecimal_Descricao = new JScrollPane();
-		scrollPane_MeDecimal_Descricao.setBounds(10, 28, 604, 90);
-		jP_MeDecimaisWindow_AbsLayout.add(scrollPane_MeDecimal_Descricao);
+		JScrollPane scrollPane_MeDecimalWindow_Descricao = new JScrollPane();
+		scrollPane_MeDecimalWindow_Descricao.setBounds(10, 28, 604, 90);
+		jP_MeDecimaisWindow_AbsLayout.add(scrollPane_MeDecimalWindow_Descricao);
 		
 		JTextArea txta_MeDecimal_Descricao = new JTextArea();
 		txta_MeDecimal_Descricao.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		scrollPane_MeDecimal_Descricao.setViewportView(txta_MeDecimal_Descricao);
+		scrollPane_MeDecimalWindow_Descricao.setViewportView(txta_MeDecimal_Descricao);
 		txta_MeDecimal_Descricao.setWrapStyleWord(true);
 		txta_MeDecimal_Descricao.setText("Neste par\u00E2metro, deve ser informada uma M\u00E1scara de Sub-rede em decimal, por exepmlo: \r\n\r\n255.255.240.0\r\n\r\nConceito:\r\n\r\nUma m\u00E1scara de sub-rede tamb\u00E9m conhecida como subnet mask ou netmask, \u00E9 uma bitmask de 32 bits usada para informar os routers.\r\n\r\nNormalmente, as m\u00E1scaras de sub-rede s\u00E3o representadas com quatro n\u00FAmeros. 0 e 255 separados por tr\u00EAs pontos [...].\r\n\r\n[...]\r\n\r\nCada m\u00E1scara de sub-rede \u00E9 um n\u00FAmero de 32 bits que usa grupos de bits consecutivos de todos os n\u00FAmeros um (1) para identificar a parte referente \u00E0 identifica\u00E7\u00E3o de rede e de zeros (0) para identificar a parte referente ao host de um endere\u00E7o IP.\r\n\r\nPor exemplo, uma m\u00E1scara de sub-rede normalmente usada com o endere\u00E7o IP 131.107.16.200 \u00E9 o seguinte n\u00FAmero bin\u00E1rio de 32 bits:\r\n\r\n11111111 11111111 00000000 00000000\r\n\r\nEsse n\u00FAmero de m\u00E1scara de sub-rede \u00E9 16 bits de \" 1 \" seguidos de 16 bits de \" 0 \", indicando que as partes referentes \u00E0 identifica\u00E7\u00E3o de rede e de host desse endere\u00E7o IP t\u00EAm ambas 16 bits de comprimento.\r\n\r\nNormalmente, essa m\u00E1scara de sub-rede \u00E9 exibida em nota\u00E7\u00E3o decimal com ponto como 255.255.0.0.\r\n\r\nFonte: http://technet.microsoft.com/pt-br/library/cc776674(v=ws.10).aspx");
 		txta_MeDecimal_Descricao.setLineWrap(true);
@@ -565,8 +625,15 @@ public class MainWindow extends JFrame {
 		jP_MeDecimaisWindow_AbsLayout.add(txtP_MeDecimalWindow_CDIR);
 		
 		JButton btn_MeDecimalWindow_back = new JButton("<< Voltar");
+		btn_MeDecimalWindow_back.setMnemonic('V');
 		btn_MeDecimalWindow_back.setBounds(10, 278, 90, 25);
 		jP_MeDecimaisWindow_AbsLayout.add(btn_MeDecimalWindow_back);
+		btn_MeDecimalWindow_back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent click) {
+				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
+				windowIntro.show(mainWindow, "window_intro_CardLayout");
+			}
+		});
 		
 		JTextPane txtP_MeDecimalWindow_MeDecimal = new JTextPane();
 		txtP_MeDecimalWindow_MeDecimal.setEditable(false);
@@ -609,69 +676,286 @@ public class MainWindow extends JFrame {
 		lbl_MeDecimalWindow_CDIR.setBounds(276, 284, 98, 14);
 		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimalWindow_CDIR);
 		
-		JButton btn_MeDecimal_clearFields = new JButton("Limpar");
-		btn_MeDecimal_clearFields.setBounds(110, 160, 90, 25);
-		jP_MeDecimaisWindow_AbsLayout.add(btn_MeDecimal_clearFields);
+		//Botão Limpar da tela "jP_MeDecimaisWindow_AbsLayout":
+		JButton btn_MeDecimalWindow_clearFields = new JButton("Limpar");
+		btn_MeDecimalWindow_clearFields.setMnemonic('L');
+		btn_MeDecimalWindow_clearFields.setBounds(110, 160, 90, 25);
+		jP_MeDecimaisWindow_AbsLayout.add(btn_MeDecimalWindow_clearFields);
+		btn_MeDecimalWindow_clearFields.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent clickApagar) {
+				textField_MeDecimalWindow_MeDecimaisG1.setText(null);
+				textField_MeDecimalWindow_MeDecimaisG2.setText(null);
+				textField_MeDecimalWindow_MeDecimaisG3.setText(null);
+				textField_MeDecimalWindow_MeDecimaisG4.setText(null);
+				txtP_MeDecimalWindow_hosts_p.setText(null);
+				txtP_MeDecimalWindow_CDIR.setText(null);
+				txtP_MeDecimalWindow_MeBinario.setText(null);
+				txtP_MeDecimalWindow_MeDecimal.setText(null);
+			}
+		});
 		
-		JButton btn_MeDecimal_calc = new JButton("Calcular");
-		btn_MeDecimal_calc.setAlignmentY(0.0f);
-		btn_MeDecimal_calc.setBounds(10, 160, 90, 25);
-		jP_MeDecimaisWindow_AbsLayout.add(btn_MeDecimal_calc);
+		JButton btn_MeDecimalWindow_calc = new JButton("Calcular");
+		btn_MeDecimalWindow_calc.setMnemonic('C');
+		btn_MeDecimalWindow_calc.setAlignmentY(0.0f);
+		btn_MeDecimalWindow_calc.setBounds(10, 160, 90, 25);
+		jP_MeDecimaisWindow_AbsLayout.add(btn_MeDecimalWindow_calc);
+		btn_MeDecimalWindow_calc.addActionListener(new ActionListener() {
+			
+			//@SuppressWarnings("unused")
+			public void actionPerformed(ActionEvent click) {
+				
+				byte grupo; // cria a variável "grupo", para determinar qual dos grupos decimais está sendo tradado no método "calcular.setnZd(grupo,G_MR)".
+				short G_MR[] = new short[4]; //cria o vetor G_MR[] com escopo Local à Ação de click do botão "btn_MeDecimal_calc":
+				
+				try {
+					//realiza a atribuição dos valores das respectivas posições do vetor G_MR[]:
+					G_MR[0] = Short.parseShort(textField_MeDecimalWindow_MeDecimaisG1.getText()); // pode retornar uma NumberFormatException (nfe).
+					G_MR[1] = Short.parseShort(textField_MeDecimalWindow_MeDecimaisG2.getText()); // pode retornar uma nfe.
+					G_MR[2] = Short.parseShort(textField_MeDecimalWindow_MeDecimaisG3.getText()); // pode retornar uma nfe.
+					G_MR[3] = Short.parseShort(textField_MeDecimalWindow_MeDecimaisG4.getText()); // pode retornar uma nfe.
+					
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(txtP_MeDecimalWindow_hosts_p, "Máscara inválida!\n\nInforme apenas números.", "Aviso:",0);
+					textField_MeDecimalWindow_MeDecimaisG1.setText(null);					
+				}
+				//verifica se os valores informados são válidos para os campos:
+				//textField_MeDecimalWindow_MeDecimaisG1
+				if(G_MR[0] == 255 || G_MR[0] == 252 || G_MR[0] == 254 || G_MR[0] == 248 || G_MR[0] == 240 || G_MR[0] == 224 || G_MR[0] == 192 || G_MR[0] == 128 || G_MR[0] == 0){
+					//textField_MeDecimalWindow_MeDecimaisG2
+					if (G_MR[1] == 255 || G_MR[1] == 252 ||  G_MR[1] == 254 || G_MR[1] == 248 || G_MR[1] == 240 || G_MR[1] == 224 || G_MR[1] == 192 || G_MR[1] == 128 || G_MR[1] == 0){
+						//textField_MeDecimalWindow_MeDecimaisG3
+						if (G_MR[2] == 255 || G_MR[2] == 252 || G_MR[2] == 254 || G_MR[2] == 248 || G_MR[2] == 240 || G_MR[2] == 224 || G_MR[2] == 192 || G_MR[2] == 128 || G_MR[2] == 0){
+							//textField_MeDecimalWindow_MeDecimaisG4
+							if (G_MR[3] == 255 || G_MR[3] == 252 || G_MR[3] == 254 || G_MR[3] == 248 || G_MR[3] == 240 || G_MR[3] == 224 || G_MR[3] == 192 || G_MR[3] == 128 || G_MR[3] == 0){
+								//verifica se os valores válidados estão em uma ordem válida:
+								if(!(G_MR[0] < G_MR[1] || G_MR[0] < G_MR[2] || G_MR[0] < G_MR[3] || G_MR[1] < G_MR[2] || G_MR[1] < G_MR[3] || G_MR[2] < G_MR[3])){
+									// realiza a atribuição dos nZd (número de Zeros decimais) para o Objeto calcular:
+									if (G_MR[0] == 255 && G_MR[1] == 255 && G_MR[2] == 255){
+										grupo = 4;
+										calcular.setnZd(grupo, G_MR[3]); // determina o nZd, através do método "calcular.setnZd(grupo,G_MR)".
+									} else if (G_MR[0] == 255 && G_MR[1] == 255 && G_MR[3] == 0){
+										grupo = 3;
+										calcular.setnZd(grupo, G_MR[2]); // determina o nZd.
+									} else if (G_MR[0] == 255 && G_MR[2] == 0 && G_MR[3] == 0){
+										grupo = 2;
+										calcular.setnZd(grupo, G_MR[1]); // determina o nZd.
+									} else if (G_MR[1] == 0 && G_MR[2] == 0 && G_MR[3] == 0) {
+										grupo = 1;
+										calcular.setnZd(grupo, G_MR[0]); // determina o nZd.	
+									}
+									
+									long hosts_p = calcular.setHostsPossibles(0, "Direto"); // determina o hosts_p, pelo método "calcular.SetHostsPossibles(hosts_n, tipoCalc)".
+									
+									//INICIO das atribuições de valores para os campos:
+									if(G_MR[3] == 254){ //Se o Grupo 4 for igual a 254:
+										JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "A Máscara de Sub-rede \"255.255.255.254\" é inutilizável.", "Aviso:", 0);
+										G_MR[0] = 0;
+										textField_MeDecimalWindow_MeDecimaisG1.setText(null);
+									} else if (G_MR[3] == 255){ //Se não, se o Grupo 4 for igual a 255:
+										JOptionPane.showMessageDialog(btn_CDIRWindow_calc, "A Máscara de Sub-rede \"255.255.255.255\" é útil apenas para um único HOST.", "Aviso:", 1);
+										txtP_MeDecimalWindow_hosts_p.setText("1");
+										txtP_MeDecimalWindow_MeDecimal.setText("255.255.255.255");
+										txtP_MeDecimalWindow_MeBinario.setText("11111111.11111111.11111111.11111111");
+										txtP_MeDecimalWindow_CDIR.setText("32");
+									} else { //Se não:
+										txtP_MeDecimalWindow_hosts_p.setText(Long.valueOf(hosts_p).toString());
+										txtP_MeDecimalWindow_MeDecimal.setText(calcular.setMaskDecimal());
+										txtP_MeDecimalWindow_MeBinario.setText(calcular.setMaskBinary());
+										txtP_MeDecimalWindow_CDIR.setText(Byte.valueOf(calcular.setCDIR()).toString());
+									}
+									
+									if (G_MR[0] == 0){ //caso o primeiro grupo da Máscara informada esteja em Branco, limpa os demais campos:
+										textField_MeDecimalWindow_MeDecimaisG2.setText(null);
+										textField_MeDecimalWindow_MeDecimaisG3.setText(null);
+										textField_MeDecimalWindow_MeDecimaisG4.setText(null);
+										txtP_MeDecimalWindow_hosts_p.setText(null);
+										txtP_MeDecimalWindow_MeDecimal.setText(null);
+										txtP_MeDecimalWindow_MeBinario.setText(null);
+										txtP_MeDecimalWindow_CDIR.setText(null);	
+									} //FIM das atribuições de valores para os campos.
+									
+									} else { //caso FALSO para a verificação de uma ordem válida.
+									JOptionPane.showMessageDialog(txtP_MeDecimalWindow_MeDecimal, "Os valores informados são válidos, mas NÃO correspondem a uma Máscara de Sub-rede VÁLIDA!\n\nPor favor, informe uma Máscara de Sub-rede válida.\n\n", "Aviso:", JOptionPane.INFORMATION_MESSAGE, null);
+									}
+							} else { //caso FALSO textField_MeDecimais_group4
+								JOptionPane.showMessageDialog(textField_MeDecimalWindow_MeDecimaisG4, "A Máscara informada é INVÁLIDA!\n\nInforme uma máscara válida contendo os valores:\n255, 252, 254, 248, 240, 224, 192, 128 ou 0.\n\n", "Aviso:", JOptionPane.INFORMATION_MESSAGE, null);						
+							}
+						} else { //caso FALSO textField_MeDecimais_group3
+							JOptionPane.showMessageDialog(textField_MeDecimalWindow_MeDecimaisG3, "A Máscara informada é INVÁLIDA!\n\nInforme uma máscara válida contendo os valores:\n255, 252, 254, 248, 240, 224, 192, 128 ou 0.\n\n", "Aviso:", JOptionPane.INFORMATION_MESSAGE, null);						
+						}
+					} else { //caso FALSO textField_MeDecimais_group2
+						JOptionPane.showMessageDialog(textField_MeDecimalWindow_MeDecimaisG2, "A Máscara informada é INVÁLIDA!\n\nInforme uma máscara válida contendo os valores:\n255, 252, 254, 248, 240, 224, 192, 128 ou 0.\n\n", "Aviso:", JOptionPane.INFORMATION_MESSAGE, null);						
+					}
+				} else { //caso FALSO textField_MeDecimais_group1
+					JOptionPane.showMessageDialog(textField_MeDecimalWindow_MeDecimaisG1, "A Máscara informada é INVÁLIDA!\n\nInforme uma máscara válida contendo os valores:\n255, 252, 254, 248, 240, 224, 192, 128 ou 0.\n\n", "Aviso:", JOptionPane.INFORMATION_MESSAGE, null);
+				}
+			}
+		});
 		
-		JLabel label_5 = new JLabel("Informe o Barramento CDIR: /");
-		label_5.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		label_5.setBounds(10, 133, 152, 14);
-		jP_MeDecimaisWindow_AbsLayout.add(label_5);
+		JLabel lbl_MeDecimalWindow_MeDecimal_Info = new JLabel("Informe uma M\u00E1scara de Sub-Rede:");
+		lbl_MeDecimalWindow_MeDecimal_Info.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_MeDecimalWindow_MeDecimal_Info.setBounds(10, 135, 173, 14);
+		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimalWindow_MeDecimal_Info);
 		
-		textField_MeDecimais_group1 = new JTextField();
-		textField_MeDecimais_group1.setToolTipText("Valores aceitos: 1 a 32.");
-		textField_MeDecimais_group1.setBackground(Color.WHITE);
-		textField_MeDecimais_group1.setAutoscrolls(false);
-		textField_MeDecimais_group1.setAlignmentY(0.0f);
-		textField_MeDecimais_group1.setAlignmentX(0.0f);
-		textField_MeDecimais_group1.setBounds(160, 129, 40, 20);
-		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimais_group1);
+		textField_MeDecimalWindow_MeDecimaisG1 = new JTextField();
+		textField_MeDecimalWindow_MeDecimaisG1.setToolTipText("Valores aceitos: 255, 254, 252, 248, 240, 224, 192, 128 ou 0.");
+		textField_MeDecimalWindow_MeDecimaisG1.setBackground(Color.WHITE);
+		textField_MeDecimalWindow_MeDecimaisG1.setAutoscrolls(false);
+		textField_MeDecimalWindow_MeDecimaisG1.setAlignmentY(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG1.setAlignmentX(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG1.setBounds(190, 129, 40, 20);
+		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimalWindow_MeDecimaisG1);
 		
-		textField_MeDecimais_group2 = new JTextField();
-		textField_MeDecimais_group2.setToolTipText("Valores aceitos: 1 a 32.");
-		textField_MeDecimais_group2.setBackground(Color.WHITE);
-		textField_MeDecimais_group2.setAutoscrolls(false);
-		textField_MeDecimais_group2.setAlignmentY(0.0f);
-		textField_MeDecimais_group2.setAlignmentX(0.0f);
-		textField_MeDecimais_group2.setBounds(210, 129, 40, 20);
-		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimais_group2);
+		textField_MeDecimalWindow_MeDecimaisG2 = new JTextField();
+		textField_MeDecimalWindow_MeDecimaisG2.setToolTipText("Valores aceitos: 255, 254, 252, 248, 240, 224, 192, 128 ou 0.");
+		textField_MeDecimalWindow_MeDecimaisG2.setBackground(Color.WHITE);
+		textField_MeDecimalWindow_MeDecimaisG2.setAutoscrolls(false);
+		textField_MeDecimalWindow_MeDecimaisG2.setAlignmentY(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG2.setAlignmentX(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG2.setBounds(240, 129, 40, 20);
+		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimalWindow_MeDecimaisG2);
 		
-		textField_MeDecimais_group3 = new JTextField();
-		textField_MeDecimais_group3.setToolTipText("Valores aceitos: 1 a 32.");
-		textField_MeDecimais_group3.setBackground(Color.WHITE);
-		textField_MeDecimais_group3.setAutoscrolls(false);
-		textField_MeDecimais_group3.setAlignmentY(0.0f);
-		textField_MeDecimais_group3.setAlignmentX(0.0f);
-		textField_MeDecimais_group3.setBounds(260, 129, 40, 20);
-		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimais_group3);
+		textField_MeDecimalWindow_MeDecimaisG3 = new JTextField();
+		textField_MeDecimalWindow_MeDecimaisG3.setToolTipText("Valores aceitos: 255, 254, 252, 248, 240, 224, 192, 128 ou 0.");
+		textField_MeDecimalWindow_MeDecimaisG3.setBackground(Color.WHITE);
+		textField_MeDecimalWindow_MeDecimaisG3.setAutoscrolls(false);
+		textField_MeDecimalWindow_MeDecimaisG3.setAlignmentY(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG3.setAlignmentX(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG3.setBounds(290, 129, 40, 20);
+		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimalWindow_MeDecimaisG3);
 		
-		textField_MeDecimais_group4 = new JTextField();
-		textField_MeDecimais_group4.setToolTipText("Valores aceitos: 1 a 32.");
-		textField_MeDecimais_group4.setBackground(Color.WHITE);
-		textField_MeDecimais_group4.setAutoscrolls(false);
-		textField_MeDecimais_group4.setAlignmentY(0.0f);
-		textField_MeDecimais_group4.setAlignmentX(0.0f);
-		textField_MeDecimais_group4.setBounds(310, 129, 40, 20);
-		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimais_group4);
+		textField_MeDecimalWindow_MeDecimaisG4 = new JTextField();
+		textField_MeDecimalWindow_MeDecimaisG4.setToolTipText("Valores aceitos: 255, 254, 252, 248, 240, 224, 192, 128 ou 0.");
+		textField_MeDecimalWindow_MeDecimaisG4.setBackground(Color.WHITE);
+		textField_MeDecimalWindow_MeDecimaisG4.setAutoscrolls(false);
+		textField_MeDecimalWindow_MeDecimaisG4.setAlignmentY(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG4.setAlignmentX(0.0f);
+		textField_MeDecimalWindow_MeDecimaisG4.setBounds(340, 129, 40, 20);
+		jP_MeDecimaisWindow_AbsLayout.add(textField_MeDecimalWindow_MeDecimaisG4);
 		
 		JLabel lbl_MeDecimaisWindow_dot3 = new JLabel(".");
 		lbl_MeDecimaisWindow_dot3.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lbl_MeDecimaisWindow_dot3.setBounds(304, 135, 4, 14);
+		lbl_MeDecimaisWindow_dot3.setBounds(334, 135, 4, 14);
 		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimaisWindow_dot3);
 		
 		JLabel lbl_MeDecimaisWindow_dot2 = new JLabel(".");
 		lbl_MeDecimaisWindow_dot2.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lbl_MeDecimaisWindow_dot2.setBounds(254, 135, 4, 14);
+		lbl_MeDecimaisWindow_dot2.setBounds(284, 135, 4, 14);
 		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimaisWindow_dot2);
 		
 		JLabel lbl_MeDecimaisWindow_dot1 = new JLabel(".");
 		lbl_MeDecimaisWindow_dot1.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lbl_MeDecimaisWindow_dot1.setBounds(203, 135, 4, 14);
+		lbl_MeDecimaisWindow_dot1.setBounds(233, 135, 4, 14);
 		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimaisWindow_dot1);
+		
+		JLabel lbl_MeDecimaisWindow_FREEWARE = new JLabel("FREEWARE");
+		lbl_MeDecimaisWindow_FREEWARE.setForeground(new Color(0, 128, 0));
+		lbl_MeDecimaisWindow_FREEWARE.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_MeDecimaisWindow_FREEWARE.setBounds(548, 294, 66, 15);
+		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimaisWindow_FREEWARE);
+		
+		JLabel lbl_MeDecimaisWindow_Distribuicao = new JLabel("Distribui\u00E7\u00E3o:");
+		lbl_MeDecimaisWindow_Distribuicao.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_MeDecimaisWindow_Distribuicao.setBounds(479, 295, 59, 14);
+		jP_MeDecimaisWindow_AbsLayout.add(lbl_MeDecimaisWindow_Distribuicao);
+		
+		JPanel jP_About_CL = new JPanel();
+		jP_About_CL.setForeground(SystemColor.menu);
+		jP_About_CL.setBorder(null);
+		jP_About_CL.setBackground(SystemColor.menu);
+		mainWindow.add(jP_About_CL, "window_About_CardLayout");
+		jP_About_CL.setLayout(new CardLayout(0, 0));
+		
+		JPanel jP_About_AbsLayout = new JPanel();
+		jP_About_AbsLayout.setLayout(null);
+		jP_About_CL.add(jP_About_AbsLayout, "window_About_AbsolutLayout");
+		
+		//Botão "Voltar" da Janela "Sobre":
+		JButton btn_AboutWindow_Back = new JButton("<< Voltar");
+		btn_AboutWindow_Back.setMnemonic('V');
+		btn_AboutWindow_Back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent click) {
+				CardLayout windowIntro = (CardLayout) mainWindow.getLayout();
+				windowIntro.show(mainWindow, "window_intro_CardLayout");
+			}
+		});
+		btn_AboutWindow_Back.setBounds(266, 215, 90, 25);
+		jP_About_AbsLayout.add(btn_AboutWindow_Back);
+		
+		JLabel lbl_AboutWindow_Titulo = new JLabel("Sobre:");
+		lbl_AboutWindow_Titulo.setAlignmentY(Component.TOP_ALIGNMENT);
+		lbl_AboutWindow_Titulo.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lbl_AboutWindow_Titulo.setBounds(290, 0, 46, 17);
+		jP_About_AbsLayout.add(lbl_AboutWindow_Titulo);
+		
+		JScrollPane scrollPane_AboutWindow_Descricao = new JScrollPane();
+		scrollPane_AboutWindow_Descricao.setBounds(10, 28, 614, 176);
+		jP_About_AbsLayout.add(scrollPane_AboutWindow_Descricao);
+	
+		JTextArea txta_About_Descricao = new JTextArea();
+		txta_About_Descricao.setEditable(false);
+		txta_About_Descricao.setAutoscrolls(false);
+		scrollPane_AboutWindow_Descricao.setViewportView(txta_About_Descricao);
+		txta_About_Descricao.setText("-------------------------------------------------------------------------\r\nOl\u00E1 Usu\u00E1rio(a)!\r\n\r\nTudo bem!?\r\n\r\nMe chamo Marcone Mendon\u00E7a e desenvolvi este aplicativo com os intuitos de come\u00E7ar a programar na\r\nlinguagem  Java\r (desculpem-me pelos possiveis bugs! rs...)\r, e reduzir o tempo dos c\u00E1lculos para\r\ndetermina\u00E7\u00E3o de M\u00E1scaras de Redes e Sub-redes para praticamente zero.\r\n\r\nEspero que  esta aplica\u00E7\u00E3o possa lhe ser \u00FAtil.\r\n\r\nCaso deseje entrar em contato, por qualquer motivo, seguem os meios:\r\n\r\nE-mail: marconemendonca@gmail.com;\r\nFacebook: https:/facebook.com/marconemm; ou\r\nGitHub: https://github.com/marconemm\r\n\r\nNo mais, um grade abra\u00E7o e at\u00E9 breve!\r\n\r\nAtenciosamente,\r\n\r\nMarcone M. Mendon\u00E7a\r\n\r\n-------------------------------------------------------------------------\r\nEste software pode ser distribuido GRATUITAMENTE.");
+		txta_About_Descricao.setTabSize(2);
+		txta_About_Descricao.setRows(6);
+		txta_About_Descricao.setLineWrap(true);
+		txta_About_Descricao.select(Byte.MIN_VALUE, 1); //determina que a ScrollBar inicie posicionada na parte superior da barra.
+		txta_About_Descricao.setForeground(SystemColor.windowText);
+		txta_About_Descricao.setBackground(SystemColor.window);
+		
+		//botão de acesso rápido ao Facebook:
+		JButton btn_AboutWindow_Facebook = new JButton("");
+		btn_AboutWindow_Facebook.setIcon(new ImageIcon(MainWindow.class.getResource("/marconemendonca/mascarasderedes/facebook-logo.png")));
+		btn_AboutWindow_Facebook.setBounds(10, 274, 35, 35);
+		jP_About_AbsLayout.add(btn_AboutWindow_Facebook);
+		btn_AboutWindow_Facebook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent click) {
+				try {
+					byte numConfirmacao = (byte)(JOptionPane.showConfirmDialog(btn_AboutWindow_Facebook, "Esta aplicação está tentando abrir o site:\nhttps://www.facebook.com/marconemm\n\nPressione \"OK\" para continuar.\n", "Aviso:", JOptionPane.OK_CANCEL_OPTION, 1));					
+					if( numConfirmacao == 0){
+						Desktop teste = Desktop.getDesktop();
+						teste.browse(new URI("https://www.facebook.com/marconemm"));		
+					}
+				} catch (Exception error) {
+					System.out.println(error);
+				}	
+			}
+		});
+		
+		//botão de acesso rápido ao GitHub:
+		JButton btn_AboutWindow_GitHub = new JButton("");
+		btn_AboutWindow_GitHub.setIcon(new ImageIcon(MainWindow.class.getResource("/marconemendonca/mascarasderedes/logo-developer-github.png")));
+		btn_AboutWindow_GitHub.setBounds(55, 281, 84, 28);
+		jP_About_AbsLayout.add(btn_AboutWindow_GitHub);
+		btn_AboutWindow_GitHub.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent click) {
+				try {
+					byte numConfirmacao = (byte)(JOptionPane.showConfirmDialog(btn_AboutWindow_GitHub, "Esta aplicação está tentando abrir o site:\nhttps://github.com/marconemm\n\nPressione \"OK\" para continuar.\n", "Aviso:", JOptionPane.OK_CANCEL_OPTION, 1));					
+					if( numConfirmacao == 0){
+						Desktop teste = Desktop.getDesktop();
+						teste.browse(new URI("https://github.com/marconemm"));	
+					}
+					} catch (Exception error) {
+						System.out.println(error);
+					}
+			}
+		});
+		
+		JLabel lbl_AboutWindow_AcessoRpido = new JLabel("Acesso r\u00E1pido:");
+		lbl_AboutWindow_AcessoRpido.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_AboutWindow_AcessoRpido.setBounds(10, 249, 71, 14);
+		jP_About_AbsLayout.add(lbl_AboutWindow_AcessoRpido);
+		
+		JLabel lbl_AboutWindow_FREEWARE = new JLabel("FREEWARE");
+		lbl_AboutWindow_FREEWARE.setForeground(new Color(0, 128, 0));
+		lbl_AboutWindow_FREEWARE.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_AboutWindow_FREEWARE.setBounds(558, 294, 66, 15);
+		jP_About_AbsLayout.add(lbl_AboutWindow_FREEWARE);
+		
+		JLabel lbl_AboutWindow_Distribuicao = new JLabel("Distribui\u00E7\u00E3o:");
+		lbl_AboutWindow_Distribuicao.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lbl_AboutWindow_Distribuicao.setBounds(489, 295, 59, 14);
+		jP_About_AbsLayout.add(lbl_AboutWindow_Distribuicao);
 	}
 }
